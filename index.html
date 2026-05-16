@@ -496,7 +496,7 @@
     <span class="edition">XXV · Mendi Maratoia · 17 May 2026</span>
   </div>
   <div class="header-meta">
-    <div class="live-badge"><span class="live-dot"></span>Live</div>
+        <div class="live-badge"><span class="live-dot"></span>Live</div>
     <span class="last-updated" id="last-updated"></span>
     <div class="refresh-info">
       Refresh in <span id="refresh-countdown">120</span>s
@@ -718,7 +718,7 @@ function sortRows(rows) {
     switch(sortCol) {
       case 'pos':
         // Running first by splits done desc, then by last split time; finished by finish time; rest last
-        const order = { '1':0, '0':1, '2':2, '3':2, '4':3 };
+        const order = { '0':0, '1':1, '2':2, '3':2, '4':3 };
         if (order[a.status] !== order[b.status]) return order[a.status] - order[b.status];
         if (a.status === '0' && b.status === '0')
           return timeToSeconds(a.finish) - timeToSeconds(b.finish);
