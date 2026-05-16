@@ -756,7 +756,7 @@ function renderTable() {
     if (filters.status && r.status !== filters.status)     return false;
     if (favOnly && !favorites.has(r.bib))                  return false;
     if (search) {
-      const haystack = (r.name + ' ' + r.bib).toLowerCase();
+      const haystack = (r.name + ' ' + r.bib + ' ' + r.city).toLowerCase();
       if (!haystack.includes(search)) return false;
     }
     return true;
