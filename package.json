@@ -1,0 +1,12 @@
+{
+  "name": "zegama-live",
+  "version": "1.0.0",
+  "description": "Zegama-Aizkorri 2026 live tracker",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
