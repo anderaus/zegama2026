@@ -227,6 +227,15 @@
 
   .pill-fav.active { background: transparent; border-color: var(--orange); color: var(--orange); }
 
+  /* filters-row: plain flex on desktop, scrollable on mobile (see @media) */
+  .filters-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    flex: 1;
+  }
+
   /* ── TABLE WRAPPER ── */
   .table-wrap {
     overflow-x: auto;
@@ -407,10 +416,62 @@
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
 
-  @media (max-width: 600px) {
-    header { padding: 12px 16px; }
-    .controls, .stats-bar { padding: 10px 16px; }
+  /* ── MOBILE ── */
+  @media (max-width: 640px) {
+    /* Header */
+    header {
+      padding: 10px 16px;
+      min-height: 56px;
+      gap: 8px;
+    }
+    .header-title { gap: 6px; }
+    .header-title h1 { font-size: 18px; }
+    .header-title .edition { font-size: 11px; }
+    .last-updated { display: none; }
+
+    /* Stats: single non-wrapping scrollable row */
+    .stats-bar {
+      padding: 8px 16px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      gap: 16px;
+    }
+    .stat-item { flex-shrink: 0; font-size: 12px; }
+
+    /* Controls: search full-width on top, filters scroll below */
+    .controls {
+      padding: 10px 16px;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 8px;
+    }
+    .search-wrap { max-width: 100%; min-width: 0; }
+    /* Prevent iOS from zooming in on input focus */
+    #search { font-size: 16px; }
+
+    .filters-row {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 4px;
+    }
+    .filter-group { flex-shrink: 0; }
+
+    /* Bigger touch targets on pills */
+    .pill { padding: 8px 14px; font-size: 13px; }
+
+    /* Table: hide low-priority columns */
+    .hide-mobile { display: none !important; }
+    table { min-width: unset; }
     .table-wrap { padding: 0 8px 40px; }
+    tbody td { padding: 10px 8px; }
+
+    /* Split panel */
+    .split-panel { padding: 12px; }
+    .split-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+    .split-panel h3 { flex-wrap: wrap; font-size: 13px; }
   }
 </style>
 </head>
@@ -440,7 +501,7 @@
 </div>
 
 <div class="controls">
-  <!-- Search -->
+  <!-- Search: always full-width on its own line on mobile -->
   <div class="search-wrap">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
       <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
@@ -448,36 +509,35 @@
     <input id="search" type="text" placeholder="Search name or bib…" oninput="renderTable()">
   </div>
 
-  <!-- Sex filter -->
-  <div class="filter-group">
-    <span class="filter-label">Sex</span>
-    <button class="pill active" data-filter="sex" data-val="">All</button>
-    <button class="pill" data-filter="sex" data-val="M" data-color="blue">M</button>
-    <button class="pill" data-filter="sex" data-val="F" data-color="purple">F</button>
-  </div>
+  <!-- Filters: single scrollable row on mobile -->
+  <div class="filters-row">
+    <div class="filter-group">
+      <span class="filter-label">Sex</span>
+      <button class="pill active" data-filter="sex" data-val="">All</button>
+      <button class="pill" data-filter="sex" data-val="M" data-color="blue">M</button>
+      <button class="pill" data-filter="sex" data-val="F" data-color="purple">F</button>
+    </div>
 
-  <!-- Category filter -->
-  <div class="filter-group">
-    <span class="filter-label">Cat.</span>
-    <button class="pill active" data-filter="cat" data-val="">All</button>
-    <button class="pill" data-filter="cat" data-val="SENM" data-color="blue">SEN M</button>
-    <button class="pill" data-filter="cat" data-val="SENF" data-color="purple">SEN F</button>
-    <button class="pill" data-filter="cat" data-val="VETM" data-color="gold">VET M</button>
-    <button class="pill" data-filter="cat" data-val="VETF" data-color="orange">VET F</button>
-  </div>
+    <div class="filter-group">
+      <span class="filter-label">Cat.</span>
+      <button class="pill active" data-filter="cat" data-val="">All</button>
+      <button class="pill" data-filter="cat" data-val="SENM" data-color="blue">SEN M</button>
+      <button class="pill" data-filter="cat" data-val="SENF" data-color="purple">SEN F</button>
+      <button class="pill" data-filter="cat" data-val="VETM" data-color="gold">VET M</button>
+      <button class="pill" data-filter="cat" data-val="VETF" data-color="orange">VET F</button>
+    </div>
 
-  <!-- Status filter -->
-  <div class="filter-group">
-    <span class="filter-label">Status</span>
-    <button class="pill active" data-filter="status" data-val="">All</button>
-    <button class="pill" data-filter="status" data-val="1" data-color="green">Running</button>
-    <button class="pill" data-filter="status" data-val="0" data-color="gold">Finished</button>
-    <button class="pill" data-filter="status" data-val="2">Retired</button>
-  </div>
+    <div class="filter-group">
+      <span class="filter-label">Status</span>
+      <button class="pill active" data-filter="status" data-val="">All</button>
+      <button class="pill" data-filter="status" data-val="1" data-color="green">Running</button>
+      <button class="pill" data-filter="status" data-val="0" data-color="gold">Finished</button>
+      <button class="pill" data-filter="status" data-val="2">Retired</button>
+    </div>
 
-  <!-- Favorites -->
-  <div class="filter-group" style="margin-left:auto">
-    <button class="pill pill-fav" id="fav-toggle" onclick="toggleFavFilter()">⭐ Favorites</button>
+    <div class="filter-group">
+      <button class="pill pill-fav" id="fav-toggle" onclick="toggleFavFilter()">⭐ Favs</button>
+    </div>
   </div>
 </div>
 
@@ -492,12 +552,12 @@
         <th data-col="fav"      style="cursor:default">⭐</th>
         <th data-col="bib"      >Bib<span class="sort-arrow">↕</span></th>
         <th data-col="name"     >Name<span class="sort-arrow">↕</span></th>
-        <th data-col="city"     >City<span class="sort-arrow">↕</span></th>
+        <th data-col="city"     class="hide-mobile">City<span class="sort-arrow">↕</span></th>
         <th data-col="cat"      >Cat.<span class="sort-arrow">↕</span></th>
         <th data-col="status"   >Status<span class="sort-arrow">↕</span></th>
         <th data-col="finish"   >Finish<span class="sort-arrow">↕</span></th>
-        <th data-col="gap"      >Gap<span class="sort-arrow">↕</span></th>
-        <th data-col="progress" style="cursor:default;min-width:120px">Checkpoints</th>
+        <th data-col="gap"      class="hide-mobile">Gap<span class="sort-arrow">↕</span></th>
+        <th data-col="progress" class="hide-mobile" style="cursor:default;min-width:120px">Checkpoints</th>
       </tr>
     </thead>
     <tbody id="tbody"></tbody>
@@ -547,7 +607,6 @@ async function fetchData() {
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const json = await res.json();
     allRows = json.aaData || [];
-    document.getElementById('cors-warning').style.display = 'none';
     updateStats();
     renderTable();
     document.getElementById('last-updated').textContent =
@@ -753,12 +812,12 @@ function renderTable() {
       <td class="name-cell">
         ${last}<span class="firstname">${first}</span>
       </td>
-      <td class="city-cell" title="${r.city}">${r.city}</td>
+      <td class="city-cell hide-mobile" title="${r.city}">${r.city}</td>
       <td class="cat-cell">${catDisplay}</td>
       <td>${statusBadge}</td>
       <td class="time-cell">${r.finish || '—'}</td>
-      <td class="gap-cell">${r.gap ? '+'+r.gap : (r.finish ? '–' : '')}</td>
-      <td>
+      <td class="gap-cell hide-mobile">${r.gap ? '+'+r.gap : (r.finish ? '–' : '')}</td>
+      <td class="hide-mobile">
         <div class="progress-bar" title="${r.splitsDone}/12 checkpoints">${segs}</div>
       </td>`;
     tr.addEventListener('click', (e) => {

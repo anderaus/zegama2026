@@ -2,7 +2,6 @@ const http  = require('http');
 const https = require('https');
 const fs    = require('fs');
 const path  = require('path');
-const url   = require('url');
 
 const DATA_URL = 'https://www.kronoak.com/live/2026/media/data/zegamaaizkorri.json';
 const PORT     = process.env.PORT || 3000;
@@ -16,7 +15,10 @@ function fetchUpstream(res) {
     const chunks = [];
     upstream.on('data', c => chunks.push(c));
     upstream.on('end', () => {
-      cache = { buf: Buffer.concat(chunks), ts: Date.now() };
+      let buf = Buffer.concat(chunks);
+      // Strip UTF-8 BOM if present (ef bb bf)
+      if (buf[0] === 0xEF && buf[1] === 0xBB && buf[2] === 0xBF) buf = buf.slice(3);
+      cache = { buf, ts: Date.now() };
       send(res, 200, 'application/json', cache.buf);
     });
   });
@@ -47,7 +49,7 @@ const MIME = {
 };
 
 const server = http.createServer((req, res) => {
-  const { pathname } = url.parse(req.url);
+  const { pathname } = new URL(req.url, 'http://localhost');
 
   if (pathname === '/api/results') {
     const age = Date.now() - cache.ts;
